@@ -33,6 +33,12 @@ Install the gem(s):
       is :cascading, :destroy => :comments
     end
     
+## TODO
+
+- add tests
+- add :null and :deny support?
+- publish in sequel www/pages/plugins
+
 ## Legal
 
 **Author:** S. Brent Faulkner <brentf@unwwwired.net>  
