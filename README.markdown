@@ -30,8 +30,22 @@ Install the gem(s):
     
     class Post < Sequel::Model
       one_to_many :comment, :order => :name
+      
+      # destroy any associated records too
       is :cascading, :destroy => :comments
+      
+      # or, if you want to null the foreign key instead, you could...
+      # is :cascading, :nullify => :comments
+      
+      # or, if you want the destroy to fail, you would...
+      # is :cascading, :restrict => :comments
     end
+
+## UPDATES
+
+### 1.0.3
+
+- added support for :nullify and :restrict options
     
 ## TODO
 

@@ -20,10 +20,30 @@ class Post < Sequel::Model
   create_table!
   many_to_one :author
   one_to_many :comments
-  is :cascading, :destroy => :comments
+  one_to_many :nulled_items
+  one_to_many :restricted_items
+  is :cascading, :destroy => :comments, :nullify => :nulled_items, :restrict => :restricted_items
 end
 
 class Comment < Sequel::Model
+  set_schema do
+    primary_key :id
+    foreign_key :post_id, :posts
+  end
+  create_table!
+  many_to_one :post
+end
+
+class NulledItem < Sequel::Model
+  set_schema do
+    primary_key :id
+    foreign_key :post_id, :posts
+  end
+  create_table!
+  many_to_one :post
+end
+
+class RestrictedItem < Sequel::Model
   set_schema do
     primary_key :id
     foreign_key :post_id, :posts
@@ -39,6 +59,7 @@ class SequelCascadingTest < Test::Unit::TestCase
     author.destroy
     assert !author.exists?
     assert post.exists?
+    assert_equal author.id, post.author_id
   end
 
   def test_should_destroy_children_when_destroyed
@@ -47,5 +68,22 @@ class SequelCascadingTest < Test::Unit::TestCase
     post.destroy
     assert !post.exists?
     assert !comment.exists?
+  end
+
+  def test_should_nullify_children_when_destroyed
+    post = Post.create
+    nulled = post.add_nulled_item(NulledItem.new)
+    post.destroy
+    assert !post.exists?
+    assert nulled.exists?
+    assert_nil post.author_id
+  end
+
+  def test_should_be_restricted_by_children_when_destroyed
+    post = Post.create
+    restricted = post.add_restricted_item(RestrictedItem.new)
+    assert_raises(Sequel::Error::InvalidOperation) { post.destroy }
+    assert post.exists?
+    assert restricted.exists?
   end
 end
