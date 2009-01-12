@@ -35,7 +35,6 @@ Install the gem(s):
     
 ## TODO
 
-- add tests
 - add :null and :deny support?
 - publish in sequel www/pages/plugins
 
