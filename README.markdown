@@ -43,6 +43,10 @@ Install the gem(s):
 
 ## UPDATES
 
+### 1.0.4
+
+- [foca] define callback methods instead of using deprecated api
+
 ### 1.0.3
 
 - added support for :nullify and :restrict options
